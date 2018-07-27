@@ -1,4 +1,4 @@
-package com.security.rest.operation.securityrestoperation;
+package com.security.rest.operation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

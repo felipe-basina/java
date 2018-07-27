@@ -1,4 +1,4 @@
-package com.security.rest.operation.securityrestoperation;
+package com.security.rest.operation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
