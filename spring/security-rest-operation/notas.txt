@@ -1,5 +1,0 @@
-Referências:
-spring rest authentication
-http://websystique.com/spring-security/secure-spring-rest-api-using-basic-authentication/
-http://websystique.com/spring-security/secure-spring-rest-api-using-oauth2/
-http://www.baeldung.com/securing-a-restful-web-service-with-spring-security
