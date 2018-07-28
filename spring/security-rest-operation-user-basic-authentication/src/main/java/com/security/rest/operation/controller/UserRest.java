@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.security.rest.operation.dto.UserResponse;
+import com.security.rest.operation.dto.UserResponseWrapper;
 import com.security.rest.operation.model.User;
 import com.security.rest.operation.service.UserService;
 
@@ -38,7 +40,8 @@ public class UserRest {
 			List<User> users = this.userService.findAllUsers();
 			logger.info("Total of users {}", users.size());
 			
-			return ResponseEntity.status(HttpStatus.OK).body(users);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new UserResponseWrapper(users));
 			
 		} catch (Exception ex) {
 			logger.error("Error when fetching all users {}", ex.getMessage(), ex);
@@ -53,7 +56,8 @@ public class UserRest {
 			
 			User user = this.userService.findById(id);
 			
-			return ResponseEntity.status(HttpStatus.OK).body(user);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new UserResponse(user));
 			
 		} catch (Exception ex) {
 			logger.error("Error when fetching user by id {}: {}", id, 
@@ -69,7 +73,8 @@ public class UserRest {
 			
 			User user = this.userService.findByUserName(userName);
 			
-			return ResponseEntity.status(HttpStatus.OK).body(user);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new UserResponse(user));
 			
 		} catch (Exception ex) {
 			logger.error("Error when fetching user by user name {}: {}", userName, 
