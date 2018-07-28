@@ -3,3 +3,9 @@ spring rest authentication
 http://websystique.com/spring-security/secure-spring-rest-api-using-basic-authentication/
 http://websystique.com/spring-security/secure-spring-rest-api-using-oauth2/
 http://www.baeldung.com/securing-a-restful-web-service-with-spring-security
+
+# Exemplos de valores em Basic Authentication
+user1:secr3t1 = dXNlcjE6c2VjcjN0MQ==
+user2:secr3t2 = dXNlcjI6c2VjcjN0Mg==
+user3:secr3t3 = dXNlcjM6c2VjcjN0Mw==
+user4:secr3t4 = dXNlcjQ6c2VjcjN0NA==
