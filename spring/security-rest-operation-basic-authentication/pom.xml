@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.security.rest.operation</groupId>
-	<artifactId>security-rest-operation</artifactId>
+	<artifactId>security-rest-operation-basic-authentication</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
