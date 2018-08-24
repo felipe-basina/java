@@ -22,7 +22,7 @@ public class RedisComponent {
 	public void addToRedis(final String key, final Object value) {
 		this.redisTemplate.opsForValue().set(key, 
 				this.jsonConvert.convertFromObjectToString(value));
-		this.redisTemplate.expire(key, 10, TimeUnit.MINUTES);
+		this.redisTemplate.expire(key, 4, TimeUnit.MINUTES);
 	}
 	
 	public String getFromRedis(final String key) {
