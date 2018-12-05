@@ -1,4 +1,4 @@
-package br.com.exemplo.springdiversos.springdiversosexemplos;
+package br.com.exemplo.spring.diversos;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

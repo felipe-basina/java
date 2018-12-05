@@ -1,4 +1,4 @@
-package br.com.exemplo.springdiversos.springdiversosexemplos;
+package br.com.exemplo.spring.diversos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,5 +8,6 @@ public class SpringDiversosExemplosApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringDiversosExemplosApplication.class, args);
-	}
+	} 
+	
 }
