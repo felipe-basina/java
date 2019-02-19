@@ -26,4 +26,11 @@ public class UserRest {
 		return this.redisComponent.getFromRedis(userId);
 	}
 
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	public String printAll() {
+		logger.info("Print all values from redis");
+		this.redisComponent.getAllValuesFromRedis();
+		return "ok";
+	}
+
 }

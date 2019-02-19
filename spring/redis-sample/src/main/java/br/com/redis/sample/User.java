@@ -16,20 +16,20 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 6001689554683689151L;
 
-    @Id
-    @SequenceGenerator(name = "SEQ_GEN", sequenceName = "SEQ_USER", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GEN")
-    private Long id;
-    private String name;
-    private long followers;
+	@Id
+	@SequenceGenerator(name = "SEQ_GEN", sequenceName = "SEQ_USER", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GEN")
+	private Long id;
+	private String name;
+	private long followers;
 
-    public User() {
-    }
+	public User() {
+	}
 
-    public User(String name, long followers) {
-        this.name = name;
-        this.followers = followers;
-    }
+	public User(String name, long followers) {
+		this.name = name;
+		this.followers = followers;
+	}
 
 	public Long getId() {
 		return id;
@@ -54,5 +54,13 @@ public class User implements Serializable {
 	public void setFollowers(long followers) {
 		this.followers = followers;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [id=").append(id).append(", name=").append(name).append(", followers=").append(followers)
+				.append("]");
+		return builder.toString();
+	}
+
 }

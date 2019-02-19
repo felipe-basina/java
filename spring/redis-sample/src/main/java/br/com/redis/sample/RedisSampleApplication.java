@@ -28,10 +28,10 @@ public class RedisSampleApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-	    logger.info("Saving users. Current user count is {}.", userRepository.count());
-	    userRepository.save(new User("Shubham", 2000));
-	    userRepository.save(new User("Pankaj", 29000));
-	    userRepository.save(new User("Lewis", 550));
-	    logger.info("Done saving users. Data: {}.", userRepository.findAll());
+	    logger.info("Persistindo registros. Total de registros atual: {}.", userRepository.count());
+	    userRepository.save(new User("Usuario 01", 2000));
+	    userRepository.save(new User("Usuario 02", 29000));
+	    userRepository.save(new User("Usuario 03", 550));
+	    logger.info("Registros persistidos. Registros: {}.", userRepository.findAll());
 	}
 }

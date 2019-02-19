@@ -21,7 +21,8 @@ public class UserRest {
 		this.userRepository = userRepository;
 	}
 
-	@Cacheable(value = "users", key = "#userId", unless = "#result.followers < 12000")
+	//@Cacheable(value = "users", key = "#userId", unless = "#result.followers < 12000")
+	@Cacheable(value = "users", key = "#userId", unless = "#result == null")
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public User getUser(@PathVariable String userId) {
 		logger.info("Getting user with ID {}.", userId);
