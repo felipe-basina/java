@@ -37,9 +37,9 @@ public class AspectConfig {
 	@Around(value = "@annotation(br.com.sample.aop.custom.annotations.TrackTime)")
 	public void around(ProceedingJoinPoint joinPoint) throws Throwable {
 		long startTime = System.currentTimeMillis();
-		joinPoint.proceed();
+		Object value = joinPoint.proceed();
 		long timeTaken = System.currentTimeMillis() - startTime;
-		logger.info("Time Taken by {} is {}", joinPoint, timeTaken);
+		logger.info("Time Taken by {} is {}. Returned value: {}", joinPoint, timeTaken, value);
 	}
 
 }

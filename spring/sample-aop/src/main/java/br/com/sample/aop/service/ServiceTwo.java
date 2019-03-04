@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.sample.aop.custom.annotations.TrackTime;
 import br.com.sample.aop.dao.DaoTwo;
 import br.com.sample.aop.util.OperationDelay;
 
@@ -19,7 +18,6 @@ public class ServiceTwo {
 	@Autowired
 	private DaoTwo daoTwo;
 	
-	@TrackTime
 	public String calculate() {
 		final String value = this.daoTwo.getValueTwo();
 		OperationDelay.delayFor(new Random(10).nextInt(10));
