@@ -15,7 +15,7 @@ public class ExecutionTimeAspect {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Around("@annotation(LogExecutionTime)")
+	@Around(value = "@annotation(LogExecutionTime)")
 	public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 		long start = System.currentTimeMillis();
 		logger.info("{} execution at {}", joinPoint.getSignature(), OffsetDateTime.now());

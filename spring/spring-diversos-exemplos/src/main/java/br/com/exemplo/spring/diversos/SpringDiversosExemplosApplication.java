@@ -1,5 +1,6 @@
 package br.com.exemplo.spring.diversos;
 
+import java.time.OffsetDateTime;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class SpringDiversosExemplosApplication {
 				logger.info("Running idx {}", idx);
 				externalComponent.callExternalServicesInParallel();
 			});
+		logger.info("Ended process at {}", OffsetDateTime.now());
 	}
 
 }
