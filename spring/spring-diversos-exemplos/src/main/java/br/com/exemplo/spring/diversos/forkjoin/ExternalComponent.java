@@ -20,7 +20,7 @@ public class ExternalComponent {
 	public void callExternalServicesInParallel() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool(externalServices.size());
 		try {
-			forkJoinPool.submit(() -> externalServices.parallelStream().forEach(externalService -> {
+			forkJoinPool.submit(() -> this.externalServices.parallelStream().forEach(externalService -> {
 				logger.info("##### Instance of {} #####", externalService.getClass().getSimpleName());
 				externalService.call();
 			})).get();
