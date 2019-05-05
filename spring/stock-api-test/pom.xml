@@ -75,7 +75,8 @@
 				<executions>
 					<execution>
 						<id>generate-java-api-v1</id>
-						<phase>generate-sources</phase>
+<!-- 						<phase>generate-sources</phase> -->
+						<phase>false</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>
