@@ -1,0 +1,240 @@
+swagger: '2.0'
+info:
+  title: Stocks Service
+  version: 1.0.0
+  description: Stock service to perform CRUD operations around a stock resource
+  termsOfService: 'https://guptaharsh.com/'
+  contact:
+    email: mailtoharshgupta@gmail.com
+basePath: /stock-service/v1
+schemes:
+  - http
+
+parameters:
+  stockId:
+    in: path
+    name: stockId
+    required: true
+    type: string
+  page:
+    name: page
+    in: query
+    description: zero-based page index in list requests.
+    type: integer
+    required: false
+    minimum: 0
+    default: 0
+  size:
+    name: size
+    in: query
+    description: the size of the page to be returned in list requests.
+    type: integer
+    required: false
+    minimum: 1
+    default: 25
+
+produces:
+  - application/json
+
+responses:
+  400BadRequest:
+    description: Request is not correct.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  404NotFound:
+    description: There is no stock for given stockId.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  500InternalServerError:
+    description: Internal Server Error.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+
+paths:
+  /stocks:
+    get:
+      operationId: listStocks
+      summary: Returns list of stocks
+      description: |-
+        Returns paginated list of stocks.
+      tags:
+        - stocks
+      parameters:
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/size'
+      responses:
+        200:
+          description: Successfull response with paginated stocks.
+          schema:
+            $ref: '#/definitions/StockListResponse'
+        500:
+          $ref: '#/responses/500InternalServerError'
+
+    post:
+      operationId: createStock
+      summary: Creates a stock
+      description: |-
+        Creates a stock
+      security: []
+      tags:
+        - stocks
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: createStockRequest
+          description: Stock to create
+          schema:
+            $ref: '#/definitions/CreateStockRequest'
+      responses:
+        201:
+          description: Successfull response with stock info
+          schema:
+            $ref: '#/definitions/StockInfo'
+        400:
+          $ref: '#/responses/400BadRequest'
+        500:
+          $ref: '#/responses/500InternalServerError'
+
+  /stocks/{stockId}:
+    get:
+      operationId: getStock
+      summary: Returns Stock of the given ID
+      description: |-
+        Returns the stock data identified by the id
+      tags:
+        - stocks
+      parameters:
+        - $ref: '#/parameters/stockId'
+      responses:
+        200:
+          description: Successfull response with stock info
+          schema:
+            $ref: '#/definitions/StockInfo'
+        400:
+          $ref: '#/responses/400BadRequest'
+        404:
+          $ref: '#/responses/404NotFound'
+        500:
+          $ref: '#/responses/500InternalServerError'
+    patch:
+      operationId: updatePrice
+      summary: updates the price of the stock identified by the given id
+      description: |-
+        Updates the price to the one provided in the request for the stock identified by given id.
+      tags:
+        - stocks
+      parameters:
+        - $ref: '#/parameters/stockId'
+        - in: body
+          name: updatePriceRequest
+          description: Price of the stock to update
+          schema:
+            $ref: '#/definitions/UpdateStockPriceRequest'
+      responses:
+        200:
+          description: Successfull response with stock info
+          schema:
+            $ref: '#/definitions/StockInfo'
+        400:
+          $ref: '#/responses/400BadRequest'
+        404:
+          $ref: '#/responses/404NotFound'
+        500:
+          $ref: '#/responses/500InternalServerError'
+
+
+definitions:
+
+  AbstractListResponse:
+    required:
+      - totalPages
+      - totalElements
+      - size
+      - number
+    properties:
+      size:
+        type: integer
+        minimum: 0
+      totalPages:
+        type: integer
+      totalElements:
+        type: integer
+      number:
+        type: integer
+
+  CreateStockRequest:
+    properties:
+      name:
+        $ref: '#/definitions/StockName'
+      price:
+        $ref: '#/definitions/StockPrice'
+    required:
+      - name
+      - price
+
+  ErrorResponse:
+    description: |-
+      Describes common fields for error responses. There could be some extra fields.
+    properties:
+      code:
+        description: Machine-readable error-code. Usually it's an ASCII string in upper-case.
+        type: string
+        minLength: 1
+      message:
+        description: Human-readable message description
+        type: string
+        minLength: 1
+      timestamp:
+        description: Error timestamp
+        type: string
+        format: 'date-time'
+      path:
+        description: Resource URI or path to invalid data component (json path)
+        type: string
+    required:
+      - code
+      - message
+      - timestamp
+
+  StockID:
+    description: Stock ID
+    type: string
+
+  StockName:
+    type: string
+    description: the name of the stock
+
+  StockPrice:
+    description: the price of the stock
+    type: integer
+
+  StockListResponse:
+    allOf:
+      - $ref: '#/definitions/AbstractListResponse'
+      - properties:
+          content:
+            type: array
+            items:
+              $ref: '#/definitions/StockInfo'
+
+  StockInfo:
+    properties:
+      stockId:
+        $ref: '#/definitions/StockID'
+      name:
+        $ref: '#/definitions/StockName'
+      price:
+        description: stock price
+        type: integer
+    required:
+      - stockId
+      - name
+      - price
+
+  UpdateStockPriceRequest:
+    properties:
+      price:
+        $ref: '#/definitions/StockPrice'
+    required:
+      - price
