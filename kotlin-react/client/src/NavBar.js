@@ -17,20 +17,22 @@ class NavBar extends Component {
     }
 
     render() {
-        return <Navbar color="light" expand="md">
-            <NavbarBrand tag={Link} to="/">Home</NavbarBrand>
-            <NavbarToggler onClick={this.toggle} />
-            <Collapse isOpen={this.state.isOpen} navbar>
-                <Nav className="ml-auto" navbar>
-                    <NavItem>
-                        <NavLink href="https://twitter.com/oktadev">@oktadev</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink href="https://github.com/felipe-basina/java/tree/master/kotlin-react">Github</NavLink>
-                    </NavItem>
-                </Nav>
-            </Collapse>
-        </Navbar>;
+        return (
+            <Navbar color="light" expand="md">
+                <NavbarBrand tag={Link} to="/">Home</NavbarBrand>
+                <NavbarToggler onClick={this.toggle} />
+                <Collapse isOpen={this.state.isOpen} navbar>
+                    <Nav className="ml-auto" navbar>
+                        <NavItem>
+                            <NavLink href="https://twitter.com/oktadev">@oktadev</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink href="https://github.com/felipe-basina/java/tree/master/kotlin-react">Github</NavLink>
+                        </NavItem>
+                    </Nav>
+                </Collapse>
+            </Navbar>
+        );
     }
 
 }
