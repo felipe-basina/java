@@ -42,8 +42,8 @@ class CoffeeShopsList extends Component {
                 isLoading: false,
             });
         } else {
-            const body = response.json();
-            const coffeeShops = body._embedded.coffeeShops;
+            const body = await response.json();
+            const coffeeShops = body._embedded.coffeeshops;
             this.setState({
                 coffeeShops: coffeeShops,
                 isLoading: false,
@@ -78,7 +78,7 @@ class CoffeeShopsList extends Component {
                 {this.props.navbar}
                 <div className="d-flex flex-row justify-content-between p-3">
                     <h3 className="coffee-shops-title">Coffee Shops</h3>
-                    <Button color="warning" tag="Link" to="/coffee-shops/new">Add New</Button>
+                    <Button color="success" tag={Link} to="/coffee-shops/new">Add New</Button>
                 </div>
                 {
                     errorMessage ?

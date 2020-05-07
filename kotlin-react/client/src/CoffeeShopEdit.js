@@ -15,19 +15,21 @@ class CoffeeShopEdit extends Component {
 
     constructor(props) {
         super(props);
-        this.setState({
+        this.state = {
             item: this.emptyItem,
             errorMessage: null,
             isCreate: false,
-        });
+        };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     async componentDidMount() {
-        this.state.isCreate = this.props.match.params.id === 'new';
-        if (!this.state.isCreate) {
-            const response = this.props.api.getById(this.props.match.params.id);
+        this.setState({
+            isCreate: this.props.match.params.id === 'new'
+        });
+        if (!this.state.isCreate && this.props.match.params.id !== 'new') {
+            const response = await this.props.api.getById(this.props.match.params.id);
             const coffeeShop = await response.json();
             this.setState({
                 item: coffeeShop,
