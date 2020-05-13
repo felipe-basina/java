@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Button, Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 class NavBar extends Component {
@@ -17,6 +17,8 @@ class NavBar extends Component {
     }
 
     render() {
+        const { isAuthenticated, login, logout } = this.props;
+
         return (
             <Navbar color="light" expand="md">
                 <NavbarBrand tag={Link} to="/">Home</NavbarBrand>
@@ -29,6 +31,16 @@ class NavBar extends Component {
                         <NavItem>
                             <NavLink href="https://github.com/felipe-basina/java/tree/master/kotlin-react">Github</NavLink>
                         </NavItem>
+                        {
+                            !isAuthenticated ?
+                                <NavItem>
+                                    <Button color="secondary" outline onClick={login}>Login</Button>
+                                </NavItem>
+                            :
+                            <NavItem>
+                                <Button color="secondary" outline onClick={logout}>Logout</Button>
+                            </NavItem>
+                        }
                     </Nav>
                 </Collapse>
             </Navbar>
