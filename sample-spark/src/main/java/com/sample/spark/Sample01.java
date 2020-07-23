@@ -4,7 +4,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import java.io.InputStream;
 import java.util.Arrays;
 
 public class Sample01 {
@@ -21,23 +20,19 @@ public class Sample01 {
 
         JavaRDD<String> numbersAsString = input.flatMap(line -> Arrays.asList(line.split(SPACE_DELIMITER)).iterator());
         JavaRDD<String> validNumbersAsString = numbersAsString.filter(number -> !number.isEmpty());
-        JavaRDD<Integer> numbers = validNumbersAsString.map(numberAsString -> Integer.parseInt(numberAsString));
+        JavaRDD<Integer> numbers = validNumbersAsString.map(Integer::parseInt);
 
-        int finalSum = numbers.reduce((x, y) -> x + y);
-
+        int finalSum = numbers.reduce(Integer::sum);
         System.out.printf("Sum up = %d\n", finalSum);
 
         javaSparkContext.close();
     }
 
     private static void inputContent(JavaRDD<String> input) {
-        input.collect().forEach(line -> {
-            System.out.printf("Partial sum up: %d\n",
-                    Arrays.asList(line.split(SPACE_DELIMITER))
-                            .stream()
-                            .map(Integer::parseInt)
-                            .reduce(0, (x, y) -> x + y));
-        });
+        input.collect().forEach(line -> System.out.printf("Partial sum up: %d\n",
+                Arrays.stream(line.split(SPACE_DELIMITER))
+                        .map(Integer::parseInt)
+                        .reduce(0, Integer::sum)));
     }
 
 }
