@@ -12,6 +12,11 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="DataStax-Repo" />
+      <option name="name" value="DataStax-Repo" />
+      <option name="url" value="https://repo.datastax.com/public-repos/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="apache-staging" />
       <option name="name" value="apache-staging" />
       <option name="url" value="https://repository.apache.org/content/repositories/staging/" />
