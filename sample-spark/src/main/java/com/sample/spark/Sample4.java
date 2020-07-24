@@ -5,7 +5,15 @@ import com.sample.spark.models.Battle;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
+import org.apache.spark.sql.types.StructType$;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Sample4 {
@@ -22,9 +30,12 @@ public class Sample4 {
         conf.set("spark.cassandra.connection.host", "127.0.0.1");
         sc = new JavaSparkContext(conf);
 
+        /*
         printAttackerKingsName();
         printBattles();
         printDefendedBattle();
+         */
+        printDataFrame();
 
         sc.close();
     }
@@ -69,6 +80,23 @@ public class Sample4 {
                 System.out.println(String.format("Battle Number %d was defended by %s.",
                         battle.getBattle_number(),
                         battle.getDefender_king())));
+    }
+
+    private static void printDataFrame() {
+        Map<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("table", TABLE);
+        optionsMap.put("keyspace", KEY_SPACE);
+
+        StructType schema = new StructType();
+
+        SparkSession ss = SparkSession.builder().getOrCreate();
+        Dataset<Row> dataset = ss.read()
+                .format("org.apache.spark.sql.cassandra")
+                //.schema()
+                .options(optionsMap)
+                .load();
+
+        dataset.filter(Objects::nonNull).groupBy("attacker_king").count().sort().show();
     }
 
 }
