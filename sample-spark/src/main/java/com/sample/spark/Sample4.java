@@ -6,6 +6,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import java.util.Objects;
+
 public class Sample4 {
 
     private static final String KEY_SPACE = "gameofthrones";
@@ -22,6 +24,7 @@ public class Sample4 {
 
         printAttackerKingsName();
         printBattles();
+        printDefendedBattle();
 
         sc.close();
     }
@@ -29,7 +32,9 @@ public class Sample4 {
     private static void printAttackerKingsName() {
         JavaRDD<String> cassandraRdd = CassandraJavaUtil.javaFunctions(sc)
                 .cassandraTable(KEY_SPACE, TABLE, CassandraJavaUtil.mapColumnTo(String.class))
-                .select("attacker_king");
+                .select("attacker_king")
+                .filter(Objects::nonNull)
+                .sortBy(name -> name, true, 1);
 
         System.out.println("################# Attacker King's Name #################");
         System.out.println("#########################################################");
@@ -42,13 +47,28 @@ public class Sample4 {
     private static void printBattles() {
         JavaRDD<Battle> battles = CassandraJavaUtil.javaFunctions(sc)
                 .cassandraTable(KEY_SPACE, TABLE, CassandraJavaUtil.mapRowTo(Battle.class))
-                .select("battle_number", "year", "attacker_king", "defender_king");
+                .select("battle_number", "year", "attacker_king", "defender_king")
+                .sortBy(battle -> battle.getBattle_number(), true, 1);
 
         System.out.println("################# Battles #################");
         System.out.println("###########################################");
         for (Battle battle : battles.collect()) {
             System.out.println(battle);
         }
+    }
+
+    private static void printDefendedBattle() {
+        JavaRDD<Battle> battles = CassandraJavaUtil.javaFunctions(sc)
+                .cassandraTable(KEY_SPACE, TABLE, CassandraJavaUtil.mapRowTo(Battle.class))
+                .select("battle_number", "year", "attacker_king", "defender_king")
+                .sortBy(battle -> battle.getBattle_number(), true, 1);
+
+        System.out.println("################# Defended Battles #################");
+        System.out.println("####################################################");
+        battles.foreach(battle ->
+                System.out.println(String.format("Battle Number %d was defended by %s.",
+                        battle.getBattle_number(),
+                        battle.getDefender_king())));
     }
 
 }
