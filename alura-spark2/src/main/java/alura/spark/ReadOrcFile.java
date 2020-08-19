@@ -18,6 +18,7 @@ public class ReadOrcFile {
     private static SparkConf conf;
     private static JavaSparkContext sc;
 
+    // referência: http://timepasstechies.com/reading-orc-file-spark/
     public static void main(String[] args) {
         Logger.getLogger("org").setLevel(Level.ERROR);
         conf = new SparkConf().setAppName("ReadFilesAsDataSet").setMaster("local");
