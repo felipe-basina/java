@@ -13,6 +13,7 @@ public class ReadFiles {
     private static SparkConf conf;
     private static JavaSparkContext sc;
 
+    // https://github.com/felipe-basina/sparkTutorial/blob/master/src/main/java/com/sparkTutorial/sparkSql/RddDatasetConversion.java
     public static void main(String[] args) {
         Logger.getLogger("org").setLevel(Level.ERROR);
         conf = new SparkConf().setAppName("ReadFiles").setMaster("local");
@@ -20,7 +21,8 @@ public class ReadFiles {
 
         Stream.of(Files.values()).forEach(file -> {
             JavaRDD<String> data = readFile(file.getFileName());
-            System.out.println(String.format("File: %s | Total: %d", file.getFileName(), data.count()));
+            System.out.println(String.format("File: %s | Total: %d | Exemplos: %s",
+                    file.getFileName(), data.count(), data.take(25)));
         });
 
         JavaRDD<String> dataContabilidade01 = readFile(Files.CONTABILIDADE_CSV_O1.getFileName());
