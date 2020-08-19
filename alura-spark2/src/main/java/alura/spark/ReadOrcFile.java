@@ -35,7 +35,8 @@ public class ReadOrcFile {
                 OrcStruct struct = orcStruct._2();
                 return struct.toString();
             }
-        }).take(10).forEach(System.out::println);
+        }).collect().forEach(System.out::println);
+        //.saveAsTextFile("out/output_data.txt");
     }
 
 }
