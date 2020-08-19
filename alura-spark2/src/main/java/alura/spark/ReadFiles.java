@@ -22,6 +22,11 @@ public class ReadFiles {
             JavaRDD<String> data = readFile(file.getFileName());
             System.out.println(String.format("File: %s | Total: %d", file.getFileName(), data.count()));
         });
+
+        JavaRDD<String> dataContabilidade01 = readFile(Files.CONTABILIDADE_CSV_O1.getFileName());
+        JavaRDD<String> dataContabilidade02 = readFile(Files.CONTABILIDADE_CSV_O2.getFileName());
+        JavaRDD<String> dataContabilidade = dataContabilidade01.union(dataContabilidade02);
+        System.out.println("Total contabilidade: " + dataContabilidade.count());
     }
 
     private static JavaRDD<String> readFile(final String file) {
