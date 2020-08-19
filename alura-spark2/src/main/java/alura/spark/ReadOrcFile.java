@@ -1,5 +1,6 @@
 package alura.spark;
 
+import alura.spark.models.OrcFileContent;
 import org.apache.hadoop.hive.ql.io.orc.OrcInputFormat;
 import org.apache.hadoop.hive.ql.io.orc.OrcStruct;
 import org.apache.hadoop.io.NullWritable;
@@ -29,11 +30,11 @@ public class ReadOrcFile {
                 NullWritable.class,
                 OrcStruct.class, 1);
 
-        orcSourceRdd.map(new Function<Tuple2<NullWritable, OrcStruct>, String>() {
+        orcSourceRdd.map(new Function<Tuple2<NullWritable, OrcStruct>, OrcFileContent>() {
             private static final long serialVersionUID = 5454545;
-            public String call(Tuple2<NullWritable, OrcStruct> orcStruct) throws Exception {
+            public OrcFileContent call(Tuple2<NullWritable, OrcStruct> orcStruct) throws Exception {
                 OrcStruct struct = orcStruct._2();
-                return struct.toString();
+                return new OrcFileContent(struct.toString());
             }
         }).collect().forEach(System.out::println);
         //.saveAsTextFile("out/output_data.txt");
