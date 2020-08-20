@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Data
 public class OrcFileContent implements Serializable {
 
-    private String id;
+    private Integer id;
 
     private String date;
 
@@ -18,7 +18,7 @@ public class OrcFileContent implements Serializable {
                 .replace("{", "")
                 .replace("}", "")
                 .split(",");
-        this.id = split[0].trim();
+        this.id = Integer.valueOf(split[0].trim());
         this.date = split[1].trim();
         this.price = Double.valueOf(split[2].trim());
     }
