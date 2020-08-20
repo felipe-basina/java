@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class OrcFileContent implements Serializable {
+public class OrcFileContent implements Serializable, IOrder {
 
     private Integer id;
 
@@ -21,6 +21,11 @@ public class OrcFileContent implements Serializable {
         this.id = Integer.valueOf(split[0].trim());
         this.date = split[1].trim();
         this.price = Double.valueOf(split[2].trim());
+    }
+
+    @Override
+    public Integer getOrderId() {
+        return this.id;
     }
 
 }

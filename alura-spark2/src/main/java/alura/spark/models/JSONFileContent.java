@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class JSONFileContent implements Serializable {
+public class JSONFileContent implements Serializable, IOrder {
 
     private Integer id;
 
@@ -28,6 +28,11 @@ public class JSONFileContent implements Serializable {
 
     private String getJsonValue(final String jsonContent) {
         return jsonContent.split(":")[1].trim();
+    }
+
+    @Override
+    public Integer getOrderId() {
+        return this.id;
     }
 
 }
