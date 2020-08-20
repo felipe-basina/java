@@ -30,13 +30,18 @@ public class ReadOrcFile {
                 NullWritable.class,
                 OrcStruct.class, 1);
 
-        orcSourceRdd.map(new Function<Tuple2<NullWritable, OrcStruct>, OrcFileContent>() {
+        JavaRDD<OrcFileContent> orcFileContents = orcSourceRdd.map(new Function<Tuple2<NullWritable, OrcStruct>,
+                OrcFileContent>() {
             private static final long serialVersionUID = 5454545;
+
             public OrcFileContent call(Tuple2<NullWritable, OrcStruct> orcStruct) throws Exception {
                 OrcStruct struct = orcStruct._2();
                 return new OrcFileContent(struct.toString());
             }
-        }).collect().forEach(System.out::println);
+        });
+
+        orcFileContents.collect().forEach(System.out::println);
+
         //.saveAsTextFile("out/output_data.txt");
     }
 
