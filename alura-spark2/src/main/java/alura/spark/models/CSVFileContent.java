@@ -3,6 +3,8 @@ package alura.spark.models;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class CSVFileContent implements Serializable, IOrder {
@@ -11,13 +13,21 @@ public class CSVFileContent implements Serializable, IOrder {
 
     private String status;
 
-    private String date;
+    private LocalDateTime date;
 
     public CSVFileContent(final String csvContent) {
         final String[] split = csvContent.split(";");
         this.id = Integer.valueOf(split[0].trim());
         this.status = split[1];
-        this.date = split[2];
+        this.date = this.toLocalDateTime(split[2]);
+    }
+
+    private LocalDateTime toLocalDateTime(final String dateTime) {
+        try {
+            return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        } catch (Exception ex) {
+            return LocalDateTime.now().minusYears(1l);
+        }
     }
 
     @Override
