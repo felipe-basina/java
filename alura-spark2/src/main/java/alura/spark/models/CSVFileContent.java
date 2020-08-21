@@ -35,4 +35,13 @@ public class CSVFileContent implements Serializable, IOrder {
         return this.id;
     }
 
+    @Override
+    public String status() {
+        return this.status;
+    }
+
+    @Override
+    public LocalDateTime date() {
+        return this.date;
+    }
 }

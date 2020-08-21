@@ -35,4 +35,19 @@ public class JSONFileContent implements Serializable, IOrder {
         return this.id;
     }
 
+    @Override
+    public String unitId() {
+        return this.unitId;
+    }
+
+    @Override
+    public Double sellPrice() {
+        return this.sellPrice;
+    }
+
+    @Override
+    public Integer amount() {
+        return this.amount;
+    }
+
 }
