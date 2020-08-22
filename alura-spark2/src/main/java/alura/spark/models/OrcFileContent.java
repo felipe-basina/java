@@ -12,7 +12,7 @@ public class OrcFileContent implements Serializable, IOrder {
     private String date;
 
     private Double price;
-
+    
     public OrcFileContent(final String orcFileContent) {
         String[] split = orcFileContent
                 .replace("{", "")
