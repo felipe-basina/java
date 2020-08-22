@@ -1,0 +1,9 @@
+{"id_ped":420143590,"id_unidade":"1","preco_venda":"119.9","quantidade":"1"}
+{"id_ped":769988527,"id_unidade":"1","preco_venda":"429.9","quantidade":"1"}
+{"id_ped":-103973999,"id_unidade":"5","preco_venda":"501.34","quantidade":"1"}
+{"id_ped":-1233015787,"id_unidade":"1","preco_venda":"859.07","quantidade":"1"}
+{"id_ped":-1715998644,"id_unidade":"1","preco_venda":"99.9","quantidade":"2"}
+{"id_ped":1701190932,"id_unidade":"1","preco_venda":"174.9","quantidade":"1"}
+{"id_ped":-1322045127,"id_unidade":"1","preco_venda":"639.99","quantidade":"1"}
+{"id_ped":1602431311,"id_unidade":"1","preco_venda":"41.9","quantidade":"1"}
+{"id_ped":1101011301,"id_unidade":"1","preco_venda":"755.2","quantidade":"1"}

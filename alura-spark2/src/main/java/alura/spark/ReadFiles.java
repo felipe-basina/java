@@ -25,10 +25,11 @@ public class ReadFiles {
                     file.getFileName(), data.count(), data.take(25)));
         });
 
-        JavaRDD<String> dataContabilidade01 = readFile(Files.CONTABILIDADE_CSV_O1.getFileName());
-        JavaRDD<String> dataContabilidade02 = readFile(Files.CONTABILIDADE_CSV_O2.getFileName());
-        JavaRDD<String> dataContabilidade = dataContabilidade01.union(dataContabilidade02);
-        System.out.println("Total contabilidade: " + dataContabilidade.count());
+//        JavaRDD<String> dataContabilidade01 = readFile(Files.CONTABILIDADE_CSV_O1.getFileName());
+//        JavaRDD<String> dataContabilidade02 = readFile(Files.CONTABILIDADE_CSV_O2.getFileName());
+//        JavaRDD<String> dataContabilidade = dataContabilidade01.union(dataContabilidade02);
+//        System.out.println("Total contabilidade: " + dataContabilidade.count());
+        readFile(Files.SITE_JSON.getFileName()).take(8).forEach(System.out::println);
     }
 
     private static JavaRDD<String> readFile(final String file) {
