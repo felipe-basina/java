@@ -5,16 +5,11 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 
-class IsItFriday {
-    static String isItFriday(String today) {
-        return "Friday".equalsIgnoreCase(today) ? "TGIF" : "Nope";
-    }
-}
-
-public class StepDefinitions {
+public class IsItFridayTest {
 
     private String today;
     private String actualAnswer;
+    private IsItFriday isItFriday = new IsItFriday();
 
     @Given("today is {string}")
     public void today_is(String today){
@@ -23,7 +18,7 @@ public class StepDefinitions {
 
     @When("I ask whether it's Friday yet")
     public void i_ask_whether_it_s_Friday_yet(){
-        actualAnswer = IsItFriday.isItFriday(this.today);
+        actualAnswer = this.isItFriday.check(this.today);
     }
 
     @Then("I should be told {string}")
