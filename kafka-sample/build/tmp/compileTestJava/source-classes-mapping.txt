@@ -1,0 +1,2 @@
+com/kafka/sample/KafkaSampleApplicationTests.java
+ com.kafka.sample.KafkaSampleApplicationTests

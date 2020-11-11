@@ -18,7 +18,7 @@ public class MessageListener {
 
     public CountDownLatch greetingLatch = new CountDownLatch(1);
 
-    @KafkaListener(topics = "${example.topic.name}", groupId = "example", containerFactory = "exampleKafkaListenerContainerFactory")
+    @KafkaListener(topics = "${example.topic.name}", groupId = "example", containerFactory = "intervalKafkaListenerContainerFactory")
     public void listenExample(String message) {
         System.out.println("Received Message in group 'example': " + message);
         latch.countDown();

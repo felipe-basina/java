@@ -84,6 +84,14 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String> intervalKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(this.consumerFactory("example"));
+        factory.getContainerProperties().setIdleBetweenPolls(50 * 1000); // Consome mensagens a cada x (ms)
+        return factory;
+    }
+
+    @Bean
     public MessageListener messageListener() {
         return new MessageListener();
     }

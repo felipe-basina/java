@@ -15,7 +15,7 @@ public class KafkaSampleApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = SpringApplication.run(KafkaSampleApplication.class, args);
-		applicationContext.getBean(MessageListener.class);
+		//applicationContext.getBean(MessageListener.class);
 
 		final MessageProducer messageProducer = applicationContext.getBean(MessageProducer.class);
 		final String exampleTopicName = "example-topic";
