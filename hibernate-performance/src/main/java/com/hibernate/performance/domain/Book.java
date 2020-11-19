@@ -28,4 +28,9 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
+    public Book(Long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
 }

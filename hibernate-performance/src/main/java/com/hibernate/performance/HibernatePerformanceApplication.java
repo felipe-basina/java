@@ -22,6 +22,7 @@ public class HibernatePerformanceApplication {
 
 		PerformanceService performanceService = app.getBean(PerformanceService.class);
 		performanceService.selectingAnEntity();
+		performanceService.selectingADomain();
 
 		log.warn("Process ended");
 		System.exit(1);
