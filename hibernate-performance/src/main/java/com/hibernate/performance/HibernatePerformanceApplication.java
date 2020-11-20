@@ -17,12 +17,14 @@ public class HibernatePerformanceApplication {
 		log.warn("Process initialized");
 
 		PerformanceComponent performanceComponent = app.getBean(PerformanceComponent.class);
-		performanceComponent.deleteData();
-		performanceComponent.createData(10, 10);
+		//performanceComponent.deleteData();
+		//performanceComponent.createData(10, 10);
 
 		PerformanceService performanceService = app.getBean(PerformanceService.class);
-		performanceService.selectingAnEntity();
-		performanceService.selectingADomain();
+		//performanceService.selectingAnEntity();
+		//performanceService.selectingADomain();
+		//performanceService.getAll();
+		performanceService.getWithDynamicEntityGraph();
 
 		log.warn("Process ended");
 		System.exit(1);
