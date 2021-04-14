@@ -28,19 +28,19 @@ public class CountSameIdJsonFile {
             JSONFileContent jsonFileContent = new JSONFileContent(content);
             return new Tuple2<>(jsonFileContent.getOrderId(), jsonFileContent);
         }));
-        System.out.println(contentAsTuple.count());
+        System.out.println("Total registers: " + contentAsTuple.count());
 
         JavaPairRDD<Integer, Iterable<JSONFileContent>> groupedValues = contentAsTuple.groupByKey();
-        System.out.println(groupedValues.count());
+        System.out.println("Total grouped registers: " + groupedValues.count());
 
         JavaPairRDD<Integer, Iterable<JSONFileContent>> justOne = groupedValues
                 .filter(groupedValue -> StreamSupport.stream(groupedValue._2().spliterator(),
                 false).count() == 1);
-        System.out.println(justOne.count());
+        System.out.println("Total unique registers: " + justOne.count());
 
         groupedValues = groupedValues.filter(groupedValue -> StreamSupport.stream(groupedValue._2().spliterator(),
                 false).count() > 1);
-        System.out.println(groupedValues.count());
+        System.out.println("Total grouped registers with more than objects: " + groupedValues.count());
 
 //        JavaPairRDD<Iterable<JSONFileContent>, Integer> inverse = JavaPairRDD.fromJavaRDD(groupedValues.map(groupValue -> {
 //            return new Tuple2<Iterable<JSONFileContent>, Integer>(groupValue._2(), groupValue._1());
