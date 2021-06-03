@@ -6,11 +6,18 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import scala.Tuple2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataFrameWithLitFunction {
 
@@ -23,6 +30,7 @@ public class DataFrameWithLitFunction {
 
         conf = new SparkConf().setAppName("DataFrameWithLitFunction").setMaster("local[*]");
         sc = new JavaSparkContext(conf);
+        SQLContext sqlContext = new SQLContext(sc);
 
         // Read file
         JavaRDD<String> fileContent = sc.textFile("in/".concat("tuple-data.txt"));
@@ -53,6 +61,18 @@ public class DataFrameWithLitFunction {
             System.out.println(id);
             System.out.println(co);
         }
+
+        // TODO: convert correctly
+        Dataset<Row> df = sqlContext.createDataFrame(rowJavaRDD.rdd(), getSchema());
+        System.out.println(df.collect());
+    }
+
+    private static StructType getSchema() {
+        List<StructField> fields = new ArrayList<>();
+        fields.add(DataTypes.createStructField("id", DataTypes.StringType, false));
+        fields.add(DataTypes.createStructField("salary", DataTypes.IntegerType, false));
+        StructType schema = DataTypes.createStructType(fields);
+        return schema;
     }
 
 }
