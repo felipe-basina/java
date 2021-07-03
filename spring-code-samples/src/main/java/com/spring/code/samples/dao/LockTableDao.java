@@ -1,6 +1,7 @@
 package com.spring.code.samples.dao;
 
 import com.spring.code.samples.entities.LockTableEntity;
+import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -87,12 +88,14 @@ public class LockTableDao {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     public LockTableEntity getAndLock4() {
-       // LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
+        LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
 
-        Session session = this.em.unwrap(Session.class);
-        LockTableEntity entity = session.get(LockTableEntity.class, 1L, LockOptions.UPGRADE);
+        this.em.unwrap(Session.class)
+                .getSession()
+                .buildLockRequest(LockOptions.UPGRADE)
+                .setLockMode(LockMode.PESSIMISTIC_WRITE)
+                .lock(entity);
 
-        //this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
         entity.setDatLock(LocalDateTime.now());
         this.em.merge(entity);
         LOGGER.info(String.format("Entity updated 4 e=%s", entity));

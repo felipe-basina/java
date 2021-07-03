@@ -28,7 +28,7 @@ public class LockTableService {
         ForkJoinPool forkJoinPool = new ForkJoinPool(total);
         forkJoinPool.execute(() -> {
             integerList.parallelStream().forEach(index -> {
-                LOGGER.info(String.format("returned e=%s", this.lockTableDao.getAndLock()));
+                LOGGER.info(String.format("returned e=%s", this.lockTableDao.getAndLock4()));
             });
         });
     }
