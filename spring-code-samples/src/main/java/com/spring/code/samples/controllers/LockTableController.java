@@ -20,4 +20,10 @@ public class LockTableController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping(path = "/2")
+    public ResponseEntity testLockTable2() {
+        this.lockTableService.getAndLock2();
+        return ResponseEntity.ok().build();
+    }
+
 }
