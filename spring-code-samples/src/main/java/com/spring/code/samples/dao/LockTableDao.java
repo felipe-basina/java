@@ -27,7 +27,7 @@ public class LockTableDao {
     @PersistenceUnit
     private EntityManagerFactory emf;
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public LockTableEntity getAndLock() {
         LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
         this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
