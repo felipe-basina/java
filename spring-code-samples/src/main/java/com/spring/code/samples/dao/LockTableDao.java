@@ -105,7 +105,6 @@ public class LockTableDao {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    //@Transactional
     public LockTableEntity getAndLock5() {
         LockTableEntity entity = this.lockTableRepository.findByIdAndLock(1L);
         this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
