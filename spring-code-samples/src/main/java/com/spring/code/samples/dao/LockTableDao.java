@@ -38,7 +38,7 @@ public class LockTableDao {
         this.em.lock(entity, LockModeType.PESSIMISTIC_READ);
         entity.setDatLock(LocalDateTime.now());
         this.em.merge(entity);
-        LOGGER.info(String.format("Entity updated e=%s", entity));
+        LOGGER.info(String.format("m=getAndLockRead Entity updated e=%s", entity));
         return entity;
     }
 
@@ -49,6 +49,17 @@ public class LockTableDao {
         entity.setDatLock(LocalDateTime.now());
         this.em.merge(entity);
         LOGGER.info(String.format("Entity updated e=%s", entity));
+        return entity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public LockTableEntity getAndLockTable() {
+        this.em.createNativeQuery("LOCK TABLES lock_table WRITE").executeUpdate();
+        LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
+        //this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
+        entity.setDatLock(LocalDateTime.now());
+        this.em.merge(entity);
+        LOGGER.info(String.format("m=getAndLockTable Entity updated e=%s", entity));
         return entity;
     }
 

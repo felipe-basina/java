@@ -49,6 +49,20 @@ public class LockTableService {
         });
     }
 
+    public void getAndLockTable() {
+        int total = 3;
+        List<Integer> integerList = IntStream.rangeClosed(1, total)
+                .boxed()
+                .collect(Collectors.toList());
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool(total);
+        forkJoinPool.execute(() -> {
+            integerList.parallelStream().forEach(index -> {
+                LOGGER.info(String.format("returned e=%s", this.lockTableDao.getAndLockTable()));
+            });
+        });
+    }
+
     public void getAndLock2() {
         int total = 3;
         List<Integer> integerList = IntStream.rangeClosed(1, total)
