@@ -14,15 +14,27 @@ public class LockTableController {
     @Autowired
     private LockTableService lockTableService;
 
-    @GetMapping
-    public ResponseEntity testLockTable() {
-        this.lockTableService.getAndLock();
+    @GetMapping(path = "/read")
+    public ResponseEntity testLockReadTable() {
+        this.lockTableService.getAndLockRead();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/write")
+    public ResponseEntity testLockWriteTable() {
+        this.lockTableService.getAndLockWrite();
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(path = "/2")
     public ResponseEntity testLockTable2() {
         this.lockTableService.getAndLock2();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/3")
+    public ResponseEntity testLockTable3() {
+        this.lockTableService.getAndLock3();
         return ResponseEntity.ok().build();
     }
 

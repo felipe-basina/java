@@ -1,11 +1,13 @@
 package com.spring.code.samples.dao;
 
 import com.spring.code.samples.entities.LockTableEntity;
+import com.spring.code.samples.repositories.LockTableRepository;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,8 +29,21 @@ public class LockTableDao {
     @PersistenceUnit
     private EntityManagerFactory emf;
 
+    @Autowired
+    private LockTableRepository lockTableRepository;
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public LockTableEntity getAndLock() {
+    public LockTableEntity getAndLockRead() {
+        LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
+        this.em.lock(entity, LockModeType.PESSIMISTIC_READ);
+        entity.setDatLock(LocalDateTime.now());
+        this.em.merge(entity);
+        LOGGER.info(String.format("Entity updated e=%s", entity));
+        return entity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public LockTableEntity getAndLockWrite() {
         LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
         this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
         entity.setDatLock(LocalDateTime.now());
@@ -52,32 +67,19 @@ public class LockTableDao {
     //@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     public LockTableEntity getAndLock3() {
         EntityManager localEntityManager = this.emf.createEntityManager();
-        EntityTransaction tx = null;
-        Session session = null;
+        localEntityManager.getTransaction().begin();
 
         LockTableEntity entity = null;
         try {
-            session = localEntityManager.unwrap(Session.class);
-            tx = localEntityManager.getTransaction();
-
-            tx.begin();
-
-            //entity = localEntityManager.find(LockTableEntity.class, 1L);
-            entity = session.get(LockTableEntity.class, 1L, LockOptions.UPGRADE);
-
+            entity = localEntityManager.find(LockTableEntity.class, 1L, LockModeType.PESSIMISTIC_WRITE);
             entity.setDatLock(LocalDateTime.now());
             localEntityManager.merge(entity);
-            LOGGER.info(String.format("Entity updated e=%s", entity));
+            localEntityManager.getTransaction().commit();
+            LOGGER.info(String.format("Entity updated 3 e=%s", entity));
         } catch (Exception ex) {
             LOGGER.error("m=getAndLock3", ex);
-            tx.rollback();
+            localEntityManager.getTransaction().rollback();
         } finally {
-            if (Objects.nonNull(session)) {
-                session.close();
-            }
-            if (Objects.nonNull(tx)) {
-                tx.commit();
-            }
             if (Objects.nonNull(localEntityManager)) {
                 localEntityManager.close();
             }
@@ -99,6 +101,17 @@ public class LockTableDao {
         entity.setDatLock(LocalDateTime.now());
         this.em.merge(entity);
         LOGGER.info(String.format("Entity updated 4 e=%s", entity));
+        return entity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    //@Transactional
+    public LockTableEntity getAndLock5() {
+        LockTableEntity entity = this.lockTableRepository.findByIdAndLock(1L);
+        this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
+        entity.setDatLock(LocalDateTime.now());
+        this.lockTableRepository.save(entity);
+        LOGGER.info(String.format("Entity updated 5 e=%s", entity));
         return entity;
     }
 
