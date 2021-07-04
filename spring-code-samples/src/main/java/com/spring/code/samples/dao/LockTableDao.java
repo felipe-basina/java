@@ -56,7 +56,6 @@ public class LockTableDao {
     public LockTableEntity getAndLockTable() {
         this.em.createNativeQuery("LOCK TABLES lock_table WRITE").executeUpdate();
         LockTableEntity entity = this.em.find(LockTableEntity.class, 1L);
-        //this.em.lock(entity, LockModeType.PESSIMISTIC_WRITE);
         entity.setDatLock(LocalDateTime.now());
         this.em.merge(entity);
         LOGGER.info(String.format("m=getAndLockTable Entity updated e=%s", entity));
