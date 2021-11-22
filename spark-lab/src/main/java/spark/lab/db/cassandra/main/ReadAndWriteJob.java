@@ -52,8 +52,7 @@ public class ReadAndWriteJob extends InitializeContext {
                 .orderBy(org.apache.spark.sql.functions.col("first_name"))
                 .show();
 
-        JavaRDD<User> userJavaRDD = userDataset
-                .javaRDD();
+        JavaRDD<User> userJavaRDD = userDataset.javaRDD();
         userJavaRDD.collect().forEach(System.out::println);
     }
 
