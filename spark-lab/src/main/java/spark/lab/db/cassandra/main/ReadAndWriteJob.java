@@ -1,51 +1,38 @@
 package spark.lab.db.cassandra.main;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
 import spark.lab.db.cassandra.models.User;
+import spark.lab.general.InitializeContext;
 
 import java.util.Arrays;
 import java.util.Random;
 
-public class ReadAndWriteJob {
-
-    private static Logger LOGGER = Logger.getLogger(ReadAndWriteJob.class);
+public class ReadAndWriteJob extends InitializeContext {
 
     private static final String KEY_SPACE = "user_management";
     private static final String TABLE = "users_by_name";
 
-    private static JavaSparkContext sc;
+    public ReadAndWriteJob() {
+        super();
+    }
 
     public static void main(String[] args) {
-        LOGGER.getLogger("org").setLevel(Level.ERROR);
-        LOGGER.getLogger("com.datastax").setLevel(Level.ERROR);
+        new ReadAndWriteJob();
 
-        SparkConf conf = new SparkConf();
-        conf.setAppName("Java API demo");
-        conf.setMaster("local[*]");
-        conf.set("spark.cassandra.connection.host", "127.0.0.1");
-        sc = new JavaSparkContext(conf);
-
-        SparkSession ss = SparkSession.builder().getOrCreate();
-
-        printUsersByName(ss);
-        addUser(ss, new User(
-                "Doe",
-                "Joe",
-                String.format("joe.doe%d@domain.com", new Random().nextInt(1000))));
-        printUsersByName(ss);
-
-        sc.close();
+        try (SparkSession ss = SparkSession.builder().getOrCreate()) {
+            printUsersByName(ss);
+            addUser(ss, new User(
+                    "Doe",
+                    "Joe",
+                    String.format("joe.doe%d@domain.com", new Random().nextInt(1000))));
+            printUsersByName(ss);
+        }
     }
 
     private static void addUser(SparkSession ss, User newUser) {
         Dataset<User> newUserDataset = ss.createDataset(Arrays.asList(newUser), User.encoder());
-
         newUserDataset
                 .withColumnRenamed("firstName", "first_name")
                 .withColumnRenamed("lastName", "last_name")
