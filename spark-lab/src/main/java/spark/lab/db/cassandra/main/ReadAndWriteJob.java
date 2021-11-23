@@ -23,7 +23,7 @@ public class ReadAndWriteJob extends InitializeContext {
     public static void main(String[] args) {
         new ReadAndWriteJob();
 
-        try (SparkSession ss = SparkSession.builder().config(conf).getOrCreate()) {
+        try (SparkSession ss = sparkSessionBuilder().getOrCreate()) {
             printUsersByName(ss);
             addUser(ss, new User(
                     "Doe",
