@@ -9,6 +9,8 @@ import spark.lab.general.InitializeContext;
 import java.util.Arrays;
 import java.util.Random;
 
+import static spark.lab.general.util.GeneralConstants.*;
+
 public class ReadAndWriteJob extends InitializeContext {
 
     private static final String KEY_SPACE = "user_management";
@@ -38,7 +40,7 @@ public class ReadAndWriteJob extends InitializeContext {
                 .withColumnRenamed("lastName", "last_name")
                 .write()
                 .mode("append")
-                .format("org.apache.spark.sql.cassandra")
+                .format(SPARK_SQL_CASSANDRA_FORMAT)
                 .option("keyspace", KEY_SPACE)
                 .option("table", TABLE)
                 .save();
@@ -46,19 +48,20 @@ public class ReadAndWriteJob extends InitializeContext {
 
     private static void printUsersByName(SparkSession ss) {
         Dataset<User> userDataset = getUsersByName(ss);
-        System.out.println("Total registers fetched = " + userDataset.count());
+        LOGGER.info("Total registers fetched = " + userDataset.count());
 
         userDataset
                 .orderBy(org.apache.spark.sql.functions.col("first_name"))
                 .show();
 
-        JavaRDD<User> userJavaRDD = userDataset.javaRDD();
-        userJavaRDD.collect().forEach(System.out::println);
+        JavaRDD<User> userJavaRDD = userDataset.javaRDD()
+                .sortBy(User::getFirstName, Boolean.TRUE, 0);
+        userJavaRDD.collect().forEach(LOGGER::info);
     }
 
     private static Dataset<User> getUsersByName(SparkSession ss) {
         return ss.read()
-                .format("org.apache.spark.sql.cassandra")
+                .format(SPARK_SQL_CASSANDRA_FORMAT)
                 .option("keyspace", KEY_SPACE)
                 .option("table", TABLE)
                 .load()
