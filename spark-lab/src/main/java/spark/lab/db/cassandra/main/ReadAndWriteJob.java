@@ -1,7 +1,9 @@
 package spark.lab.db.cassandra.main;
 
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import spark.lab.db.cassandra.models.User;
 import spark.lab.general.InitializeContext;
@@ -9,7 +11,7 @@ import spark.lab.general.InitializeContext;
 import java.util.Arrays;
 import java.util.Random;
 
-import static spark.lab.general.util.GeneralConstants.*;
+import static spark.lab.general.util.GeneralConstants.SPARK_SQL_CASSANDRA_FORMAT;
 
 public class ReadAndWriteJob extends InitializeContext {
 
@@ -30,6 +32,7 @@ public class ReadAndWriteJob extends InitializeContext {
                     "Joe",
                     String.format("joe.doe%d@domain.com", new Random().nextInt(1000))));
             printUsersByName(ss);
+            printTotalGrouped(ss);
         }
     }
 
@@ -69,6 +72,16 @@ public class ReadAndWriteJob extends InitializeContext {
                         org.apache.spark.sql.functions.col("last_name").as("lastName"),
                         org.apache.spark.sql.functions.col("email"))
                 .as(User.encoder());
+    }
+
+    private static void printTotalGrouped(SparkSession ss) {
+        Dataset<User> userDataset = getUsersByName(ss);
+        userDataset.groupBy(org.apache.spark.sql.functions.col("lastName"))
+                .count()
+                .sort(org.apache.spark.sql.functions.desc("count"),
+                        org.apache.spark.sql.functions.asc("lastName"))
+                .filter((FilterFunction<Row>) value -> ((Long) value.getAs("count")) > 1)
+                .show();
     }
 
 }
