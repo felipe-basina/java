@@ -4,6 +4,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import spark.lab.db.cassandra.models.User;
 import spark.lab.general.InitializeContext;
@@ -33,6 +34,7 @@ public class ReadAndWriteJob extends InitializeContext {
                     String.format("joe.doe%d@domain.com", new Random().nextInt(1000))));
             printUsersByName(ss);
             printTotalGrouped(ss);
+            generateUserParquetFile(ss);
         }
     }
 
@@ -82,6 +84,25 @@ public class ReadAndWriteJob extends InitializeContext {
                         org.apache.spark.sql.functions.asc("lastName"))
                 .filter((FilterFunction<Row>) value -> ((Long) value.getAs("count")) > 1)
                 .show();
+    }
+
+    private static void generateUserParquetFile(SparkSession ss) {
+        final String filePath = "/opt/dev/files";
+        Dataset<User> userDataset = getUsersByName(ss);
+        LOGGER.info("Total users from database = " + userDataset.count());
+
+        userDataset
+                .write()
+                .option("header", true)
+                .mode(SaveMode.Overwrite)
+                .parquet(filePath);
+        LOGGER.info("File generated at = " + filePath);
+
+        Dataset<User> usersFromParquetFile = ss.read()
+                .parquet(filePath)
+                .as(User.encoder());
+        LOGGER.info("Total users from file = " + usersFromParquetFile.count());
+        usersFromParquetFile.show();
     }
 
 }
