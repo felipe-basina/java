@@ -48,12 +48,15 @@ public class GroupAndCountJob extends InitializeContext {
                     .groupBy(functions.col("processed_date"),
                             functions.col("num_partition"))
                     .df()
-                    .filter((FilterFunction<Row>) value ->
-                            value.getAs("processed_date").equals(Date.valueOf(DEFAULT_DATE))
-                                    && ((Integer) value.getAs("num_partition")) == index)
+                    .filter(getRowFilterFunction(index))
                     .count();
             LOGGER.info("Filter processed_date = '" + DEFAULT_DATE + "', index = '" + index + "', total = " + totalByFilter);
         });
+    }
+
+    private static FilterFunction<Row> getRowFilterFunction(int index) {
+        return value -> value.getAs("processed_date").equals(Date.valueOf(DEFAULT_DATE))
+                && ((Integer) value.getAs("num_partition")) == index;
     }
 
     // TODO: Realizar consulta por filtro
