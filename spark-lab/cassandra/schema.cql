@@ -211,3 +211,27 @@ INSERT INTO users_by_name
     'Alex',
     'aart@gmail.com'
   );
+
+CREATE KEYSPACE IF NOT EXISTS random_stuah WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
+USE random_stuah;
+
+DROP TABLE random_stuff;
+
+CREATE TABLE IF NOT EXISTS random_stuff (
+ processed_date date,
+ num_partition int,
+ uid       text,
+ PRIMARY KEY((processed_date, num_partition), uid)
+);
+
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 0, '43b5b7e1-5ae1-4094-b83e-2631a2226f24');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 0, 'aa73e47f-211f-49d5-bb28-ee97742b7b2d');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 0, 'f02c8325-1d1f-44d2-a0d7-96715e57f06b');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 1, 'a07517cd-571b-44b6-929a-7601606b243e');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 2, 'ce160f87-f167-4ad0-ba45-8d11846a7522');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 2, 'ba2345c5-d0b9-4440-a43f-1af380b427bd');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 3, '7a40f887-bc27-417a-bbd5-c993265bec78');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 3, '892675f8-9d6c-45f4-b9c0-9e2b99f98157');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 4, 'eb910759-92f8-46c9-ab5e-b85dfd7c418b');
+INSERT INTO random_stuff (processed_date, num_partition, uid) values ('2021-01-01', 5, '0aa05b4e-6474-4fa7-ac98-df6580331cd4');
