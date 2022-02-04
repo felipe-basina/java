@@ -30,6 +30,7 @@ public class GroupAndCountJob extends InitializeContext {
             Dataset<Row> randomStuff = getRawRandomStuff(ss);
             LOGGER.info("Total data = " + randomStuff.count());
             groupByProcessedDateAndNumPartition(randomStuff);
+            checkMemoryAndDatabaseGroup(ss, randomStuff);
         }
     }
 
@@ -43,27 +44,51 @@ public class GroupAndCountJob extends InitializeContext {
 
     private static void groupByProcessedDateAndNumPartition(Dataset<Row> randomStuff) {
         IntStream.range(0, 11).forEach(index -> {
-            long totalByFilter = randomStuff
-                    .orderBy(functions.col("num_partition"))
-                    .groupBy(functions.col("processed_date"),
-                            functions.col("num_partition"))
-                    .df()
-                    .filter(getRowFilterFunction(index))
+            long totalByFilter = groupByProcessedDateAndNumPartition(randomStuff
+                    .orderBy(functions.col("num_partition")), DEFAULT_DATE, index)
                     .count();
             LOGGER.info("Filter processed_date = '" + DEFAULT_DATE + "', index = '" + index + "', total = " + totalByFilter);
         });
     }
 
-    private static FilterFunction<Row> getRowFilterFunction(int index) {
-        return value -> value.getAs("processed_date").equals(Date.valueOf(DEFAULT_DATE))
-                && ((Integer) value.getAs("num_partition")) == index;
+    private static void checkMemoryAndDatabaseGroup(SparkSession ss, Dataset<Row> memRandomStuff) {
+        IntStream.range(0, 11).forEach(index -> {
+            long memTotal = groupByProcessedDateAndNumPartition(memRandomStuff, DEFAULT_DATE, index).count();
+
+            long dbTotal = getRawRandomStuffByProcessedDateAndNumPartition(ss, DEFAULT_DATE, index)
+                    .count();
+
+            LOGGER.info("Index = " + index
+                    + ", same total? " + (memTotal == dbTotal)
+                    + " -> memTotal: " + memTotal
+                    + ", dbTotal: " + dbTotal);
+        });
     }
 
-    // TODO: Realizar consulta por filtro
     private static Dataset<Row> getRawRandomStuffByProcessedDateAndNumPartition(SparkSession ss,
                                                                                 LocalDate processedDate,
                                                                                 int numPartition) {
-        return null;
+        return ss.read()
+                .format(SPARK_SQL_CASSANDRA_FORMAT)
+                .option("keyspace", KEY_SPACE)
+                .option("table", TABLE)
+                .load()
+                .filter(getRowFilterFunction(processedDate, numPartition));
+    }
+
+    private static FilterFunction<Row> getRowFilterFunction(LocalDate processedDate, int index) {
+        return value -> value.getAs("processed_date").equals(Date.valueOf(processedDate))
+                && ((Integer) value.getAs("num_partition")) == index;
+    }
+
+    private static Dataset<Row> groupByProcessedDateAndNumPartition(Dataset<Row> randomStuff,
+                                                                    LocalDate processedDate,
+                                                                    int numPartition) {
+        return randomStuff
+                .groupBy(functions.col("processed_date"),
+                        functions.col("num_partition"))
+                .df()
+                .filter(getRowFilterFunction(processedDate, numPartition));
     }
 
 }
