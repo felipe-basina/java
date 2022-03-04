@@ -2,6 +2,7 @@ package spark.lab.db.cassandra.main;
 
 import org.apache.hadoop.fs.*;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import spark.lab.db.cassandra.models.User;
@@ -67,6 +68,8 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
 
     private static void generateUserParquetFile(SparkSession ss) throws IOException {
         final String filePath = "/opt/dev/files";
+        final String targetFolder = "/opt/dev/renamed/";
+
         Dataset<User> userDataset = getUsersByName(ss);
         LOGGER.info("Total users from database = " + userDataset.count());
 
@@ -94,6 +97,7 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
 
         // Write parquet contents in a single csv file
         usersFromParquetFile
+                .drop(org.apache.spark.sql.functions.col("email"))
                 .coalesce((int) fileLength)
                 .write()
                 .option("header", true)
@@ -103,6 +107,7 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
         LOGGER.info("#### " + new Path(filePath));
 
         RemoteIterator<LocatedFileStatus> csv = fileSystem.listFiles(new Path(filePath.concat("csv")), false);
+
         int index = 0;
         while (csv.hasNext()) {
             LocatedFileStatus next = csv.next();
@@ -112,18 +117,39 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
 
             final String fileName = next.getPath().toString().replace("file:", "").trim();
 
-            FileUtil.copy(
-                    fileSystem,
-                    new Path(fileName),
-                    fileSystem,
-                    new Path("/opt/dev/renamed/"
-                            .concat(String.format("file_%s_%d.csv", LocalDate.now(), ++index))),
-                    true,
-                    ss.sparkContext().hadoopConfiguration());
+            sampleRow(ss, fileName);
+            copyFileToTargetFolder(ss, fileSystem, targetFolder, fileName, ++index);
         }
 
+        deleteTempFolder(fileSystem, filePath);
+        deleteTempFolder(fileSystem, filePath.concat("csv"));
+    }
+
+    private static void sampleRow(SparkSession ss, String fileName) {
+        Dataset<Row> csvContent = ss.read().csv(fileName);
+        Row row = csvContent.toJavaRDD().collect().get(1);
+        LOGGER.info("Sample of firstName = " + row.getString(0));
+        LOGGER.info("Total content for file index = [" + fileName + "]: " + csvContent.count());
+    }
+
+    private static void copyFileToTargetFolder(SparkSession ss,
+                                               FileSystem fileSystem,
+                                               String targetFolder,
+                                               String fileName,
+                                               int index)
+            throws IOException {
+        FileUtil.copy(
+                fileSystem,
+                new Path(fileName),
+                fileSystem,
+                new Path(targetFolder
+                        .concat(String.format("file_%s_%d.csv", LocalDate.now(), index))),
+                false,
+                ss.sparkContext().hadoopConfiguration());
+    }
+
+    private static void deleteTempFolder(FileSystem fileSystem, String filePath) throws IOException {
         fileSystem.delete(new Path(filePath), true);
-        fileSystem.delete(new Path(filePath.concat("csv")), true);
     }
 
 }
