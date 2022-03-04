@@ -79,44 +79,30 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
         Dataset<User> userDataset = getUsersByName(ss);
         LOGGER.info("Total users from database = " + userDataset.count());
 
-        // Generates parquet files
-        userDataset
-                .write()
-                .option("header", true)
-                .mode(SaveMode.Overwrite)
-                .parquet(filePath);
-        LOGGER.info("File generated at = " + filePath);
-
-        // Read parquet file contents
-        Dataset<User> usersFromParquetFile = ss.read()
-                .parquet(filePath)
-                .as(User.encoder());
-        LOGGER.info("Total users from file = " + usersFromParquetFile.count());
-        usersFromParquetFile.show();
-
+        // To read a folder and get total bytes from it
         FileSystem fileSystem = FileSystem.get(ss.sparkContext().hadoopConfiguration());
-        long length = fileSystem.getContentSummary(new Path(filePath)).getLength();
-        //long fileLength = length / (1 * 1024 * 1024); // 1 MB
-        long fileLength = length / (100 * 1024); // 100 KB
-        LOGGER.info(">>>>>> Length = " + length);
-        LOGGER.info(">>>>>> File length = " + fileLength);
+//        long length = fileSystem.getContentSummary(new Path(filePath)).getLength();
+//        long fileLengthMb = length / (1 * 1024 * 1024); // 1 MB
+//        long fileLength = length / (100 * 1024); // 100 KB
+//        LOGGER.info(">>>>>> Length = " + length);
+//        LOGGER.info(">>>>>> File length = " + fileLength);
 
         // Write parquet contents in a single csv file
-        usersFromParquetFile
+        userDataset
                 .drop(org.apache.spark.sql.functions.col("email"))
-                .coalesce((int) fileLength)
+                .coalesce(3) // Should be replaced by fileLength when it exists
                 .write()
                 .option("header", true)
                 .mode(SaveMode.Overwrite)
-                .csv(filePath.concat("csv"));
+                .csv(filePath);
 
         LOGGER.info("#### " + new Path(filePath));
 
-        RemoteIterator<LocatedFileStatus> csv = fileSystem.listFiles(new Path(filePath.concat("csv")), false);
+        RemoteIterator<LocatedFileStatus> csvFiles = fileSystem.listFiles(new Path(filePath), false);
 
         int index = 0;
-        while (csv.hasNext()) {
-            LocatedFileStatus next = csv.next();
+        while (csvFiles.hasNext()) {
+            LocatedFileStatus next = csvFiles.next();
             if (!next.getPath().toString().contains(".csv")) {
                 continue;
             }
@@ -131,7 +117,6 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
                 .format("compact_%s.zip", DateTimeFormatter.ofPattern("yyyyMMddkkmmss").format(LocalDateTime.now())));
 
         deleteTempFile(fileSystem, filePath);
-        deleteTempFile(fileSystem, filePath.concat("csv"));
     }
 
     private static void sampleRow(SparkSession ss, String fileName) {
@@ -153,7 +138,7 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
                 fileSystem,
                 new Path(targetFolder
                         .concat(String.format("file_%s_%d.csv", LocalDate.now(), index))),
-                false,
+                true,
                 ss.sparkContext().hadoopConfiguration());
     }
 
