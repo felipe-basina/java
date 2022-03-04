@@ -8,9 +8,15 @@ import org.apache.spark.sql.SparkSession;
 import spark.lab.db.cassandra.models.User;
 import spark.lab.general.InitializeContext;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static spark.lab.general.util.GeneralConstants.SPARK_SQL_CASSANDRA_FORMAT;
 
@@ -121,8 +127,11 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
             copyFileToTargetFolder(ss, fileSystem, targetFolder, fileName, ++index);
         }
 
-        deleteTempFolder(fileSystem, filePath);
-        deleteTempFolder(fileSystem, filePath.concat("csv"));
+        compactFiles(fileSystem, targetFolder, String
+                .format("compact_%s.zip", DateTimeFormatter.ofPattern("yyyyMMddkkmmss").format(LocalDateTime.now())));
+
+        deleteTempFile(fileSystem, filePath);
+        deleteTempFile(fileSystem, filePath.concat("csv"));
     }
 
     private static void sampleRow(SparkSession ss, String fileName) {
@@ -148,8 +157,39 @@ public class ReadAndWriteLargeFileJob extends InitializeContext {
                 ss.sparkContext().hadoopConfiguration());
     }
 
-    private static void deleteTempFolder(FileSystem fileSystem, String filePath) throws IOException {
+    private static void deleteTempFile(FileSystem fileSystem, String filePath) throws IOException {
         fileSystem.delete(new Path(filePath), true);
+    }
+
+    private static void compactFiles(FileSystem fileSystem,
+                                 String targetFolder,
+                                 String compactedFileName) throws IOException {
+        RemoteIterator<LocatedFileStatus> targetFiles = fileSystem.listFiles(new Path(targetFolder), false);
+
+        try (FileOutputStream fileWriter = new FileOutputStream(targetFolder.concat(compactedFileName));
+             ZipOutputStream zip = new ZipOutputStream(fileWriter)) {
+            while (targetFiles.hasNext()) {
+                LocatedFileStatus next = targetFiles.next();
+                if (!next.getPath().toString().contains(".csv")) {
+                    continue;
+                }
+
+                final String fileName = next.getPath().toString().replace("file:", "").trim();
+                LOGGER.info("File name to be compacted: " + fileName);
+
+                byte[] buf = new byte[1024];
+                int len;
+                try (FileInputStream in = new FileInputStream(fileName)) {
+                    String name = next.getPath().getName();
+                    zip.putNextEntry(new ZipEntry(name));
+                    while ((len = in.read(buf)) > 0) {
+                        zip.write(buf, 0, len);
+                    }
+                }
+
+                deleteTempFile(fileSystem, fileName);
+            }
+        }
     }
 
 }
