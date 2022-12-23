@@ -68,7 +68,7 @@ public class AnaliseRecordsTransporter20220807 extends InitializeContext {
                     dataset, datasetCsv, "idt_turnover", "idt_id","right"
             );
             showJoinedContentThroughAggregationFunctions(rightJoined);
-            writeContentIntoCsvFile(rightJoined, "/home/afsimao/Downloads/analise1.csv", SEMICOLON_DELIMITER);
+            writeContentIntoCsvFile(rightJoined, "/home/afsimao/Downloads/analise1.csv", SEMICOLON_DELIMITER, true);
 
 //            Dataset<Row> innerJoined = getJoinedDataset(
 //                    dataset, datasetCsv, "idt_turnover", "idt_id", "inner"
