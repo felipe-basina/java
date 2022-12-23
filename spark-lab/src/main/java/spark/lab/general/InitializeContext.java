@@ -5,6 +5,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.functions;
 import org.apache.spark.storage.StorageLevel;
@@ -53,12 +54,22 @@ public abstract class InitializeContext {
         return joinedDataset;
     }
 
-    protected static void writeContentIntoCsvFile(Dataset<Row> dataset, String path, String delimiter) {
+    protected static void writeContentIntoCsvFile(
+            Dataset<Row> dataset, String path, String delimiter, Boolean useHeader
+    ) {
         dataset.repartition(1)
                 .write()
                 .option("delimiter", delimiter)
-                .option("header", true)
+                .option("header", useHeader)
+                .mode(SaveMode.Overwrite)
                 .csv(path);
+    }
+
+    protected static void writeContentIntoTextFile(Dataset<Row> dataset, String path) {
+        dataset.repartition(1)
+                .write()
+                .option("header", true)
+                .text(path);
     }
 
     protected static void showCountGroupedBy(Dataset<Row> dataset, Column column) {
