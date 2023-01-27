@@ -1,4 +1,4 @@
-package spark.lab.kafka;
+package spark.lab.streams;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;

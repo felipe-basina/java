@@ -1,4 +1,4 @@
-package spark.lab.kafka;
+package spark.lab.streams;
 
 import java.util.concurrent.TimeoutException;
 import org.apache.spark.sql.Dataset;
