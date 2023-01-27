@@ -44,12 +44,21 @@ public class SampleStream extends InitializeContext {
 
             Dataset<Row> rowDataset = dataset
                     .select(functions.from_json(functions.col("value"), schema).as("data"))
-                    .select("data.*");
+                    .select("data.*")
+                    .withColumn("DESC_GENDER",
+                            functions.when(functions.col("gender").equalTo("M"), "MALE")
+                                    .otherwise("FEMALE")
+                    );
 
             rowDataset.writeStream()
                     .format("console")
                     .outputMode("append")
                     .option("numRows", 1000)
+                    /*.format("csv")
+                    .option("checkpointLocation", "checkpoint")
+                    .option("delimiter", ";")
+                    .option("header", true)
+                    .option("path", "/home/afsimao/Downloads/analise1.csv")*/
                     .start()
                     .awaitTermination(10 * 1000);
         } catch (StreamingQueryException e) {
