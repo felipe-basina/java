@@ -3,6 +3,7 @@ package spark.lab.samples;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -61,8 +62,11 @@ public class DataFrameManipulation extends InitializeContext {
                     functions.when(
                             functions.col("documentType").equalTo("CNPJ"),
                             functions.format_string("%20s", functions.col("documentType"))
-                    ).otherwise(functions.format_string("%15s", functions.col("documentType"))).as("documentType")
-            );
+                    ).otherwise(functions.format_string("%2s", functions.col("documentType"))).as("documentType"),
+                    functions.when(
+                            functions.col("documentType").equalTo("CNPJ"),
+                            functions.lit("pointless")
+                    ).otherwise("NO SENSE").as("DESCRIPTION"));
 
             for (String column : modifiedDataset.columns()) {
                 modifiedDataset = modifiedDataset.withColumnRenamed(column, column.concat("\t"));
