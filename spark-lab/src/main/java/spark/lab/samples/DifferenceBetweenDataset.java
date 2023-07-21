@@ -41,7 +41,7 @@ public class DifferenceBetweenDataset extends InitializeContext {
             Dataset<Row> deltaDataset = originalDataset
                     .join(withOnlyOddIdDataset,
                             originalDataset.col("id").equalTo(withOnlyOddIdDataset.col("id")),
-                            "LEFTANTI");
+                            org.apache.spark.sql.catalyst.plans.LeftAnti.productPrefix());
             deltaDataset.show();
         }
     }
