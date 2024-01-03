@@ -18,10 +18,15 @@ public abstract class InitializeContext {
 
     protected static final String SEMICOLON_DELIMITER = ";";
 
+    /**
+     * SparkUI http://localhost:4050/jobs/
+     */
     public InitializeContext() {
         conf = new SparkConf()
                 .setAppName("Java API demo")
                 .setMaster("local[*]")
+                .set("spark.driver.bindAddress", "localhost")
+                .set("spark.ui.port", "4050")
                 .set("spark.cassandra.connection.host", "127.0.0.1");
     }
 
@@ -79,6 +84,11 @@ public abstract class InitializeContext {
                 .agg(functions.count(column))
                 .orderBy(column.asc())
                 .show();
+    }
+
+    protected static void showSparkUI() {
+        System.out.println("SparkUI available on http://localhost:4050/");
+        while (true) {}
     }
 
 }
